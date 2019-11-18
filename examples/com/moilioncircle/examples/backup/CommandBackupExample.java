@@ -16,13 +16,18 @@
 
 package com.moilioncircle.examples.backup;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.impl.GenericKeyValueCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
+import org.apache.logging.log4j.core.util.JsonUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,7 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("resource")
 public class CommandBackupExample {
     public static void main(String[] args) throws IOException, URISyntaxException {
-        final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("/path/to/appendonly.aof")));
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("/home/two8g/redis-replicator/appendonly.aof")));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -57,16 +62,13 @@ public class CommandBackupExample {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    replicator.addRawByteListener(rawByteListener);
+
                 }
                 if (event instanceof Command) {
-                    if (acc.incrementAndGet() == 1000) {
-                        try {
-                            out.close();
-                            replicator.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        System.out.println(new ObjectMapper().writeValueAsString(event));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -74,14 +76,14 @@ public class CommandBackupExample {
 
         replicator.open();
 
-        //check aof file
-        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                System.out.println(event);
-            }
-        });
-        replicator.open();
+//        //check aof file
+//        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
+//        replicator.addEventListener(new EventListener() {
+//            @Override
+//            public void onEvent(Replicator replicator, Event event) {
+//                System.out.println(event);
+//            }
+//        });
+//        replicator.open();
     }
 }

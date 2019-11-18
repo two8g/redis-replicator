@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.moilioncircle.redis.replicator.event.Event;
 
 /**
@@ -23,4 +24,9 @@ import com.moilioncircle.redis.replicator.event.Event;
  * @since 2.1.0
  */
 public interface Command extends Event {
+    @JsonProperty("command")
+    default String getCommandName() {
+        String s = getClass().getSimpleName().toUpperCase();
+        return s.substring(0, s.length() - 7);
+    }
 }

@@ -142,3 +142,27 @@
 	* Remove all members in a sorted set within the given indexes
 * ZREMRANGEBYSCORE key min max
 	* Remove all members in a sorted set within the given scores
+
+
+# DELETE
+
+* DEL/UNLINK
+    * {"keys":["YQ==","Yg=="]}
+
+# UPDATE
+
+* APPEND
+    * {"key":"YQ==","value":"MQ=="}
+* MSET/MSETNX
+    * {"kv":{"YWFh":"MQ==","YmJi":"Mg=="}}
+* SET/GETSET/PSETEX/SETNX
+    * {"key":"YQ==","value":"MQ=="}
+    * {"key":"YQ==","ex":111111111111,"value":"MQ=="}
+* DECR/DECRBY/INCR/INCRBY/INCRBYFLOAT
+    * {"key":"YQ=="}
+    * {"key":"YQ==","value":1}
+
+* HSET/HMSET/HSETNX
+    * {"key":"Yg==","field":"YQ==","value":"MQ=="}
+* HINCRBY/HINCRBYFLOAT
+    * {"key":"Yg==","field":"YQ==","increment":1}
